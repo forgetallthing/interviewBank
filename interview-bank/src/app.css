@@ -17,7 +17,6 @@ body {
 .sidebar-toggle {
     width: 30px;
     height: 30px;
-    background-color: blueviolet;
     position: fixed;
     top: 17px;
     left: 200px;
@@ -137,4 +136,9 @@ body {
     margin-top: 17px;
     text-align: end;
     padding-right: 25px;
+}
+
+.formEditor{
+    padding: 20px;
+    background-color: #ffffff;
 }
