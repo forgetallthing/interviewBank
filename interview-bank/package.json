@@ -3,14 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5555",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^4.0.6",
     "@vue/compiler-sfc": "^3.2.31",
     "element-plus": "^2.0.2",
     "node": "^16.13.2",
+    "tinymce": "^5.10.3",
     "vue": "^3.2.25"
   },
   "devDependencies": {

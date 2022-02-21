@@ -1,0 +1,139 @@
+body {
+    margin: 0;
+}
+
+.el-aside {
+    width: 200px !important;
+    min-height: 100vh;
+    background-color: #f7f7f7;
+    position: fixed;
+}
+
+.el-main {
+    padding: 0 !important;
+}
+
+.sidebar-toggle {
+    width: 30px;
+    height: 30px;
+    background-color: blueviolet;
+    position: fixed;
+    top: 17px;
+    left: 200px;
+    cursor: pointer;
+}
+
+.el-tree {
+    background-color: #f7f7f7 !important;
+}
+
+.el-tree-node__content {
+    height: 36px !important;
+}
+
+.list {
+    height: calc(100vh - 100px);
+    padding: 0 20px 20px 20px;
+    margin: 0;
+    list-style: none;
+}
+
+.list .list-item+.list-item {
+    margin-top: 15px;
+}
+
+.list .list-item-page {
+    margin-top: 20px;
+}
+
+.list .list-item-page .el-pagination {
+    float: right;
+}
+
+.el-collapse-item__header {
+    color: var(--el-color-primary) !important;
+    border-bottom-width: 0 !important;
+}
+
+.el-collapse-item__wrap {
+    border-bottom-width: 0 !important;
+}
+
+::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 5px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    background: #ededed;
+}
+
+@media all and (max-width: 500px) {
+    .aside-close .el-aside {
+        width: 0 !important;
+        transition: all 0.25s ease-out;
+    }
+
+
+    .aside-open .el-aside {
+        width: 200px !important;
+        transition: all 0.25s ease-out;
+    }
+
+    .el-main {
+        margin-left: 0;
+    }
+
+    .aside-close .sidebar-toggle {
+        left: 0px;
+        transition: all 0.25s ease-out;
+    }
+
+    .aside-open .sidebar-toggle {
+        left: 200px;
+        transition: all 0.25s ease-out;
+    }
+}
+
+@media all and (min-width: 500px) {
+    .aside-close .el-aside {
+        width: 0 !important;
+        transition: all 0.25s ease-out;
+    }
+
+    .aside-close .el-main {
+        margin-left: 0px;
+        transition: all 0.25s ease-out;
+    }
+
+    .aside-open .el-aside {
+        width: 200px !important;
+        transition: all 0.25s ease-out;
+    }
+
+    .aside-open .el-main {
+        margin-left: 200px;
+        transition: all 0.25s ease-out;
+    }
+
+    .aside-close .sidebar-toggle {
+        left: 0px;
+        transition: all 0.25s ease-out;
+    }
+
+    .aside-open .sidebar-toggle {
+        left: 200px;
+        transition: all 0.25s ease-out;
+    }
+}
+
+.tools{
+    height: 60px;
+    margin-top: 17px;
+    text-align: end;
+    padding-right: 25px;
+}
