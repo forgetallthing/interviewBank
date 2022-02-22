@@ -26,3 +26,6 @@ get
   class: [] 分类数组
   search: string 搜索框输入文字
 }
+
+获取分类
+http://localhost/question/getClass
