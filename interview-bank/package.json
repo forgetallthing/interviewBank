@@ -10,6 +10,7 @@
   "dependencies": {
     "@tinymce/tinymce-vue": "^4.0.6",
     "@vue/compiler-sfc": "^3.2.31",
+    "axios": "^0.26.0",
     "element-plus": "^2.0.2",
     "node": "^16.13.2",
     "tinymce": "^5.10.3",
