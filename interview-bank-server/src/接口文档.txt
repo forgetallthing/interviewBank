@@ -1,0 +1,28 @@
+新增或修改题目
+http://localhost:3000/question/saveQuestion
+post
+{
+  code: string; 不传则为新增，传则为修改
+  question: string;
+  class: string;
+  level: number;
+  sort: number;
+  answer: string;
+}
+
+删除题目
+http://localhost:3000/question/delQuestion
+post
+{ 
+  code: string 必传
+}
+
+获取题目
+http://localhost:3000/question/getQuestion
+get
+{ 
+  page: 0 批次 必传
+  count: 15 一次获取的数据条数
+  class: [] 分类数组
+  search: string 搜索框输入文字
+}
