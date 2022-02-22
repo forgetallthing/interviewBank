@@ -47,7 +47,7 @@ const toggle = () => {
 //   },
 // ];
 const data = reactive([]);
-const genClass = (dataClass) => {
+const genClass = dataClass => {
   const fatherRecord = {};
   for (let i = 0; i < dataClass.length; i++) {
     const element = dataClass[i];
@@ -59,7 +59,7 @@ const genClass = (dataClass) => {
       } else {
         fatherRecord[element.father] = {
           code: element.father,
-          children: [curEle],
+          children: [curEle]
         };
       }
       fatherRecord[element.code] = curEle;
@@ -78,11 +78,12 @@ onMounted(async () => {
   const res = await getClass();
   console.log(res);
   genClass(res.list);
+  load()
 });
 
 const defaultProps = {
   children: "children",
-  label: "label",
+  label: "label"
 };
 
 const list = reactive([]);
@@ -100,7 +101,7 @@ const load = async () => {
     page: page.value++,
     count: 20,
     class: quesClass.value,
-    search: "",
+    search: ""
   });
   console.log(res);
 
@@ -126,7 +127,7 @@ const getAllClass = (data, arr) => {
   return arr;
 };
 
-const handleNodeClick = async (data) => {
+const handleNodeClick = async data => {
   // const a = {
   //   label: "HTML",
   //   code: "HTML",
@@ -154,7 +155,7 @@ const form = reactive({
   sort: "",
   question: "",
   answer: "",
-  code: "",
+  code: ""
 });
 
 const editType = ref("add");
@@ -163,7 +164,7 @@ const add = () => {
   dialogTableVisible.value = true;
 };
 
-const update = (item) => {
+const update = item => {
   editType.value = "update";
   dialogTableVisible.value = true;
   form.class = item.class;
@@ -176,43 +177,52 @@ const update = (item) => {
 
 const onSubmit = async () => {
   console.log(form);
-  // const res = await saveQuestion(form);
-  // if (res.state === "ok") {
-  //   ElMessage({
-  //     type: "success",
-  //     message: "保存成功",
-  //   });
-  // } else {
-  //   ElMessage({
-  //     type: "error",
-  //     message: "保存失败",
-  //   });
-  // }
+  const res = await saveQuestion(form);
+  if (res.state === "ok") {
+    ElMessage({
+      type: "success",
+      message: "保存成功",
+    });
+  } else {
+    ElMessage({
+      type: "error",
+      message: "保存失败",
+    });
+  }
 };
 
 const onDelete = () => {
   ElMessageBox.confirm("确认删除?", "Warning", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
-    type: "warning",
+    type: "warning"
   }).then(async () => {
     const res = await delQuestion({
-      code: form.code,
+      code: form.code
     });
     if (res.state === "ok") {
       ElMessage({
         type: "success",
-        message: "删除成功",
+        message: "删除成功"
       });
     } else {
       ElMessage({
         type: "error",
-        message: "删除失败",
+        message: "删除失败"
       });
     }
   });
 };
 
+const quesChange = msg => {
+  console.log(msg);
+  form.question = msg;
+};
+
+const answerChange = msg => {
+  console.log(msg);
+  form.answer = msg;
+};
 </script>
 
 <template>
@@ -222,7 +232,7 @@ const onDelete = () => {
         :data="data"
         :props="defaultProps"
         @node-click="handleNodeClick"
-        highlight-current='true'
+        :highlight-current="true"
       />
     </div>
     <div class="el-main">
@@ -233,33 +243,23 @@ const onDelete = () => {
       </div>
       <div class="tools">
         <el-space wrap>
-          <el-button type="primary" @click="add()" v-if="!dialogTableVisible"
-            >添加试题</el-button
-          >
-          <el-button type="primary" @click="dialogTableVisible = false" v-else
-            >关闭</el-button
-          >
+          <el-button type="primary" @click="add()" v-if="!dialogTableVisible">添加试题</el-button>
+          <el-button type="primary" @click="dialogTableVisible = false" v-else>关闭</el-button>
           <el-button
             type="primary"
             v-if="editType === 'update' && dialogTableVisible"
             @click="onDelete()"
-            >删除</el-button
-          >
-          <el-button
-            type="primary"
-            v-show="dialogTableVisible"
-            @click="onSubmit"
-            >保存</el-button
-          >
+          >删除</el-button>
+          <el-button type="primary" v-show="dialogTableVisible" @click="onSubmit">保存</el-button>
         </el-space>
       </div>
       <div class="formEditor" v-if="dialogTableVisible">
         <el-form ref="formRef" :model="form">
           <el-form-item label="题干">
-            <TEditor ref="editor" v-model="form.question" />
+            <TEditor ref="editor" :value="form.question" v-on:contentchange="quesChange" />
           </el-form-item>
           <el-form-item label="答案">
-            <TEditor ref="editor" v-model="form.answer" />
+            <TEditor ref="editor" :value="form.answer" v-on:contentchange="answerChange" />
           </el-form-item>
           <el-form-item label="分类">
             <el-select v-model="form.class" placeholder="选择分类">
