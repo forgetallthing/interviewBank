@@ -26,3 +26,12 @@ export function delQuestion(param) {
         param,
     });
 }
+
+//获取分类
+export function getClass(param) {
+    return request({
+        url: '/question/getClass',
+        method: 'get',
+        param,
+    });
+}

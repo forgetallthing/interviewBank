@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, ref, onMounted } from "vue";
 import { Fold } from "@element-plus/icons-vue";
-import { getQuestion, saveQuestion, delQuestion } from "./api/api";
+import { getQuestion, saveQuestion, delQuestion, getClass } from "./api/api";
 import { ElMessageBox, ElMessage } from "element-plus";
 
 if (document.documentElement.clientWidth > 500) {
@@ -19,35 +19,35 @@ const toggle = () => {
   }
 };
 
-const dataClass = [
-  {
-    label: "1-1",
-    code: "1-1",
-    father: "1",
-  },
-  {
-    label: "1",
-    code: "1",
-    father: "",
-  },
-  {
-    label: "1-2",
-    code: "1-2",
-    father: "1",
-  },
-  {
-    label: "1-1-1",
-    code: "1-1-1",
-    father: "1-1",
-  },
-  {
-    label: "2",
-    code: "2",
-    father: "",
-  },
-];
+// const dataClass = [
+//   {
+//     label: "1-1",
+//     code: "1-1",
+//     father: "1",
+//   },
+//   {
+//     label: "1",
+//     code: "1",
+//     father: "",
+//   },
+//   {
+//     label: "1-2",
+//     code: "1-2",
+//     father: "1",
+//   },
+//   {
+//     label: "1-1-1",
+//     code: "1-1-1",
+//     father: "1-1",
+//   },
+//   {
+//     label: "2",
+//     code: "2",
+//     father: "",
+//   },
+// ];
 const data = reactive([]);
-const genClass = () => {
+const genClass = (dataClass) => {
   const fatherRecord = {};
   for (let i = 0; i < dataClass.length; i++) {
     const element = dataClass[i];
@@ -74,8 +74,10 @@ const genClass = () => {
   }
 };
 
-onMounted(() => {
-  genClass();
+onMounted(async () => {
+  const res = await getClass();
+  console.log(res);
+  genClass(res.list);
 });
 
 const defaultProps = {
@@ -87,6 +89,7 @@ const list = reactive([]);
 const loading = ref(false);
 const noMore = ref(false);
 const page = ref(0);
+const quesClass = ref(null);
 
 const load = async () => {
   //避免首次发多次请求
@@ -96,7 +99,7 @@ const load = async () => {
   const res = await getQuestion({
     page: page.value++,
     count: 20,
-    class: null,
+    class: quesClass.value,
     search: "",
   });
   console.log(res);
@@ -107,6 +110,41 @@ const load = async () => {
   } else {
     noMore.value = true;
   }
+};
+
+const getAllClass = (data, arr) => {
+  if (!Array.isArray(data)) {
+    data = [data];
+  }
+  for (let i = 0; i < data.length; i++) {
+    arr.push(data[i].code);
+    const child = data[i].children;
+    if (child.length > 0) {
+      getAllClass(child, arr);
+    }
+  }
+  return arr;
+};
+
+const handleNodeClick = async (data) => {
+  // const a = {
+  //   label: "HTML",
+  //   code: "HTML",
+  //   children: [
+  //     {
+  //       label: "123",
+  //       code: "123",
+  //       children: [{ label: "333", code: "333", children: [] }],
+  //     },
+  //     { label: "1", code: "1", children: [] },
+  //   ],
+  // };
+  // console.log(getAllClass(a, []));
+  console.log(data);
+  quesClass.value = getAllClass(data, []);
+  loading.value = false;
+  page.value = 0;
+  load();
 };
 
 const dialogTableVisible = ref(false);
@@ -175,17 +213,6 @@ const onDelete = () => {
   });
 };
 
-const handleNodeClick = (data) => {
-  console.log(data);
-  const res = await getQuestion({
-    page: 0,
-    count: 20,
-    class: null,
-    search: "",
-  });
-  console.log(res);
-
-};
 </script>
 
 <template>
@@ -195,6 +222,7 @@ const handleNodeClick = (data) => {
         :data="data"
         :props="defaultProps"
         @node-click="handleNodeClick"
+        highlight-current='true'
       />
     </div>
     <div class="el-main">
