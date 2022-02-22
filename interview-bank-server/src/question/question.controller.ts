@@ -32,4 +32,10 @@ export class QuestionController {
     const list = await this.questionService.getQuestionList(param);
     return { state: 'ok', page: param.page, list };
   }
+
+  @Get('getClass')
+  async getClass(): Promise<any> {
+    const list = await this.questionService.getClass();
+    return { state: 'ok', list };
+  }
 }
