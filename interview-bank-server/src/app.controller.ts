@@ -6,6 +6,6 @@ export class AppController {
   @Get()
   root(@Response() res) {
     // res.sendFile(join(__dirname, '../public/', 'index.html'));
-    return res.render();
+    return res.render('index.html');
   }
 }

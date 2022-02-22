@@ -4,9 +4,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { config } from './common/common';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { ReqMiddleware } from './middleware/req.middleware';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [MongooseModule.forRoot(config.mongoUri), QuestionModule],
+  controllers: [AppController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
