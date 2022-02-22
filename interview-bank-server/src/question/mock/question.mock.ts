@@ -1,8 +1,8 @@
 export const questionClass = [
   {
     code: 'HTML',
-    name: 'HTML',
-    items: [
+    label: 'HTML',
+    children: [
       {
         code: 'DOM',
         name: 'DOM',
