@@ -139,14 +139,16 @@ export default {
       },
       watch: {
             value (newValue) {
+                  console.log(newValue);
                   this.contentValue = newValue
             },
             contentValue (newValue) {
+                   console.log(newValue);
                   this.$emit('input', newValue)
             },
       },
       created(){
-      
+      console.log(this.value);
       },
       mounted(){
             tinymce.init({})

@@ -131,14 +131,19 @@ body {
     }
 }
 
-.tools{
+.tools {
     height: 60px;
     margin-top: 17px;
     text-align: end;
     padding-right: 25px;
 }
 
-.formEditor{
+.formEditor {
     padding: 20px;
     background-color: #ffffff;
+}
+
+.tips {
+    text-align: center;
+    color: #a0a3a5;
 }
