@@ -256,7 +256,7 @@ const clickHeader = () => {
         </el-icon>
       </div>
       <div class="tools">
-        <el-space wrap>
+        <el-space wrap v-if="secretKey">
           <el-button type="primary" @click="add()" v-if="!dialogTableVisible"
             >添加试题</el-button
           >
@@ -321,7 +321,7 @@ const clickHeader = () => {
         <li v-for="item in list" :key="item.level" class="list-item">
           <el-card class="box-card">
             <span v-html="item.question"></span>
-            <div class="tools">
+            <div class="tools" v-if="secretKey">
               <el-button type="primary" @click="update(item)">编辑</el-button>
             </div>
             <el-collapse>
