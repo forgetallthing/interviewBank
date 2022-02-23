@@ -4,6 +4,8 @@ import { Fold } from "@element-plus/icons-vue";
 import { getQuestion, saveQuestion, delQuestion, getClass } from "./api/api";
 import { ElMessageBox, ElMessage } from "element-plus";
 
+const secretKey = localStorage.getItem("secretKey");
+
 if (document.documentElement.clientWidth > 500) {
   document.getElementsByTagName("body")[0].className = "aside-open";
 } else {
@@ -47,7 +49,7 @@ const toggle = () => {
 //   },
 // ];
 const data = reactive([]);
-const genClass = dataClass => {
+const genClass = (dataClass) => {
   const fatherRecord = {};
   for (let i = 0; i < dataClass.length; i++) {
     const element = dataClass[i];
@@ -59,7 +61,7 @@ const genClass = dataClass => {
       } else {
         fatherRecord[element.father] = {
           code: element.father,
-          children: [curEle]
+          children: [curEle],
         };
       }
       fatherRecord[element.code] = curEle;
@@ -74,16 +76,18 @@ const genClass = dataClass => {
   }
 };
 
+const allClass = ref([]);
 onMounted(async () => {
   const res = await getClass();
   console.log(res);
-  genClass(res.list);
-  load()
+  allClass.value = res.list;
+  genClass([{ code: null, label: "全部", father: "", sort: 0 }, ...res.list]);
+  load();
 });
 
 const defaultProps = {
   children: "children",
-  label: "label"
+  label: "label",
 };
 
 const list = reactive([]);
@@ -101,7 +105,7 @@ const load = async () => {
     page: page.value++,
     count: 20,
     class: quesClass.value,
-    search: ""
+    search: "",
   });
   console.log(res);
 
@@ -127,22 +131,11 @@ const getAllClass = (data, arr) => {
   return arr;
 };
 
-const handleNodeClick = async data => {
-  // const a = {
-  //   label: "HTML",
-  //   code: "HTML",
-  //   children: [
-  //     {
-  //       label: "123",
-  //       code: "123",
-  //       children: [{ label: "333", code: "333", children: [] }],
-  //     },
-  //     { label: "1", code: "1", children: [] },
-  //   ],
-  // };
-  // console.log(getAllClass(a, []));
+const handleNodeClick = async (data) => {
   console.log(data);
-  quesClass.value = getAllClass(data, []);
+  list.length = 0;
+  const c = getAllClass(data, []);
+  quesClass.value = c[0] === null ? null : c;
   loading.value = false;
   page.value = 0;
   load();
@@ -155,16 +148,22 @@ const form = reactive({
   sort: "",
   question: "",
   answer: "",
-  code: ""
+  code: "",
 });
 
 const editType = ref("add");
 const add = () => {
   editType.value = "add";
   dialogTableVisible.value = true;
+  form.class = "";
+  form.level = 0;
+  form.sort = "";
+  form.question = "";
+  form.answer = "";
+  form.code = "";
 };
 
-const update = item => {
+const update = (item) => {
   editType.value = "update";
   dialogTableVisible.value = true;
   form.class = item.class;
@@ -177,12 +176,13 @@ const update = item => {
 
 const onSubmit = async () => {
   console.log(form);
-  const res = await saveQuestion(form);
+  const res = await saveQuestion({ ...form, key: secretKey });
   if (res.state === "ok") {
     ElMessage({
       type: "success",
       message: "保存成功",
     });
+    dialogTableVisible.value = false;
   } else {
     ElMessage({
       type: "error",
@@ -195,39 +195,53 @@ const onDelete = () => {
   ElMessageBox.confirm("确认删除?", "Warning", {
     confirmButtonText: "OK",
     cancelButtonText: "Cancel",
-    type: "warning"
+    type: "warning",
   }).then(async () => {
     const res = await delQuestion({
-      code: form.code
+      code: form.code,
+      key: secretKey,
     });
     if (res.state === "ok") {
       ElMessage({
         type: "success",
-        message: "删除成功"
+        message: "删除成功",
       });
+      dialogTableVisible.value = false;
     } else {
       ElMessage({
         type: "error",
-        message: "删除失败"
+        message: "删除失败",
       });
     }
   });
 };
 
-const quesChange = msg => {
-  console.log(msg);
+const quesChange = (msg) => {
   form.question = msg;
 };
 
-const answerChange = msg => {
-  console.log(msg);
+const answerChange = (msg) => {
   form.answer = msg;
+};
+
+const clickHeader = () => {
+  ElMessageBox.prompt("Please input your secretKey", "Tip", {
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+  }).then(({ value }) => {
+    localStorage.setItem("secretKey", value);
+    ElMessage({
+      type: "success",
+      message: `密钥设置成功`,
+    });
+  });
 };
 </script>
 
 <template>
   <div class="el-container">
     <div class="el-aside">
+      <div class="header" @dblclick="clickHeader">逢考必过</div>
       <el-tree
         :data="data"
         :props="defaultProps"
@@ -243,28 +257,46 @@ const answerChange = msg => {
       </div>
       <div class="tools">
         <el-space wrap>
-          <el-button type="primary" @click="add()" v-if="!dialogTableVisible">添加试题</el-button>
-          <el-button type="primary" @click="dialogTableVisible = false" v-else>关闭</el-button>
+          <el-button type="primary" @click="add()" v-if="!dialogTableVisible"
+            >添加试题</el-button
+          >
+          <el-button type="primary" @click="dialogTableVisible = false" v-else
+            >关闭</el-button
+          >
           <el-button
             type="primary"
             v-if="editType === 'update' && dialogTableVisible"
             @click="onDelete()"
-          >删除</el-button>
-          <el-button type="primary" v-show="dialogTableVisible" @click="onSubmit">保存</el-button>
+            >删除</el-button
+          >
+          <el-button
+            type="primary"
+            v-show="dialogTableVisible"
+            @click="onSubmit"
+            >保存</el-button
+          >
         </el-space>
       </div>
       <div class="formEditor" v-if="dialogTableVisible">
         <el-form ref="formRef" :model="form">
           <el-form-item label="题干">
-            <TEditor ref="editor" :value="form.question" v-on:contentchange="quesChange" />
+            <TEditor
+              ref="editor"
+              :value="form.question"
+              v-on:contentchange="quesChange"
+            />
           </el-form-item>
           <el-form-item label="答案">
-            <TEditor ref="editor" :value="form.answer" v-on:contentchange="answerChange" />
+            <TEditor
+              ref="editor"
+              :value="form.answer"
+              v-on:contentchange="answerChange"
+            />
           </el-form-item>
           <el-form-item label="分类">
             <el-select v-model="form.class" placeholder="选择分类">
               <el-option
-                v-for="item in dataClass"
+                v-for="item in allClass"
                 :label="item.label"
                 :value="item.code"
                 :key="item.code"
@@ -289,7 +321,7 @@ const answerChange = msg => {
         <li v-for="item in list" :key="item.level" class="list-item">
           <el-card class="box-card">
             <span v-html="item.question"></span>
-            <div>
+            <div class="tools">
               <el-button type="primary" @click="update(item)">编辑</el-button>
             </div>
             <el-collapse>

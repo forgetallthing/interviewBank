@@ -147,3 +147,11 @@ body {
     text-align: center;
     color: #a0a3a5;
 }
+
+.header {
+    color: #269aff;
+    text-align: center;
+    line-height: 60px;
+    font-size: 20px;
+    cursor: pointer;
+}
