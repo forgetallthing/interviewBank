@@ -35,7 +35,11 @@ export class QuestionService {
       .find(
         filter,
         { _id: 0, __v: 0 },
-        { skip: param.page * param.count, sort: { sort: 1 } },
+        {
+          skip: param.page * param.count,
+          sort: { _id: -1 },
+          limit: param.count,
+        },
       )
       .exec();
   }
