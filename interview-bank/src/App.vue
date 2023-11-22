@@ -1,10 +1,12 @@
 <script setup>
-import { reactive, ref, onMounted } from "vue";
 import { Fold } from "@element-plus/icons-vue";
-import { getQuestion, saveQuestion, delQuestion, getClass } from "./api/api";
-import { ElMessageBox, ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { onMounted, reactive, ref } from "vue";
+import { delQuestion, getClass, getQuestion, saveQuestion } from "./api/api";
 
 const secretKey = localStorage.getItem("secretKey");
+
+const searchVal = ref("");
 
 if (document.documentElement.clientWidth > 500) {
   document.getElementsByTagName("body")[0].className = "aside-open";
@@ -90,7 +92,7 @@ const defaultProps = {
   label: "label",
 };
 
-const list = reactive([]);
+let list = reactive([]);
 const loading = ref(false);
 const noMore = ref(false);
 const page = ref(0);
@@ -105,7 +107,7 @@ const load = async () => {
     page: page.value++,
     count: 20,
     class: quesClass.value,
-    search: "",
+    search: searchVal.value,
   });
   console.log(res);
 
@@ -236,6 +238,15 @@ const clickHeader = () => {
     });
   });
 };
+
+const handleInput = (val) => {
+  console.log(val, searchVal.value);
+  page.value = 0;
+  list.length = 0;
+  loading.value = false;
+  quesClass.value = null;
+  load();
+};
 </script>
 
 <template>
@@ -256,6 +267,13 @@ const clickHeader = () => {
         </el-icon>
       </div>
       <div class="tools">
+        <el-input
+          v-model="searchVal"
+          @input="handleInput"
+          placeholder="请搜索"
+          :style="{ width: '300px' }"
+          v-if="!dialogTableVisible"
+        />
         <el-space wrap v-if="secretKey">
           <el-button type="primary" @click="add()" v-if="!dialogTableVisible"
             >添加试题</el-button
