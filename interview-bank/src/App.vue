@@ -100,8 +100,6 @@ const quesClass = ref(null);
 
 const load = async () => {
   //避免首次发多次请求
-  if (loading.value) return;
-
   loading.value = true;
   const res = await getQuestion({
     page: page.value++,
@@ -240,7 +238,6 @@ const clickHeader = () => {
 };
 
 const handleInput = (val) => {
-  console.log(val, searchVal.value);
   page.value = 0;
   list.length = 0;
   loading.value = false;
@@ -334,7 +331,9 @@ const handleInput = (val) => {
         v-infinite-scroll="load"
         style="overflow: auto"
         v-show="!dialogTableVisible"
-        infinite-scroll-disabled="noMore"
+        :infinite-scroll-disabled="noMore"
+        infinite-scroll-distance="50px"
+        :infinite-scroll-immediate="false"
       >
         <li v-for="item in list" :key="item.level" class="list-item">
           <el-card class="box-card">
